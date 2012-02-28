@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Yaatwic</string>
+    <string name="request_token_details">To log into Twitter, you will be redirected to Twitter website.
+    Please enter your credentials and remember the PIN to write it back into Yaatwic.</string>
+    <string name="request_token_button">Launch Twitter website</string>
+    <string name="receive_token_details">Please write here the PIN given on Twitter website.</string>
+    <string name="receive_token_button">OK</string>
+    <string name="request_another_pin">Request another PIN</string>
+</resources>

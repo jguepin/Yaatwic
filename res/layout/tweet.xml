@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="100px"
+              android:orientation="horizontal">
+
+    <ImageView android:id="@+id/avatar"
+               android:src="@drawable/avatar"
+               android:layout_margin="10px"
+               android:layout_height="wrap_content"
+               android:layout_width="wrap_content"/>
+
+    <LinearLayout android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical">
+
+        <TextView android:id="@+id/author"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:textStyle="bold"
+                  android:text="foo"/>
+
+        <TextView android:id="@+id/message"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:text="Hello World"/>
+
+        <TextView android:id="@+id/date"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:gravity="right"
+                  android:textStyle="italic"
+                  android:text="01-01-1970 at 01:00"/>
+
+    </LinearLayout>
+
+</LinearLayout>
