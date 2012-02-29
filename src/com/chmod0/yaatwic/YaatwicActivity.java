@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -15,9 +16,11 @@ import twitter4j.auth.AccessToken;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class YaatwicActivity extends Activity {
     private ArrayList<Status> tweets;
+    private HashMap<Long, Drawable> usersProfileImages;
     private ArrayAdapter<Status> tweetsAdapter;
     private Twitter twitter;
     private YaatwiConf yaatwiConf;
@@ -34,8 +37,9 @@ public class YaatwicActivity extends Activity {
 
         // Create the list of tweets
         tweets = new ArrayList<Status>();
+        usersProfileImages = new HashMap<Long, Drawable>();
 
-        tweetsAdapter = new TweetsAdapter(this, tweets);
+        tweetsAdapter = new TweetsAdapter(this, tweets, usersProfileImages);
 
         // Get the tweets list view
         ListView tweetsView = (ListView) findViewById(R.id.tweets);

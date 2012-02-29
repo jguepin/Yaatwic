@@ -1,8 +1,7 @@
 package com.chmod0.yaatwic;
 
 import android.app.Activity;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +11,19 @@ import android.widget.TextView;
 import twitter4j.Status;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TweetsAdapter extends ArrayAdapter<Status> {
 
     private Activity activity;
-    private ArrayList<Status> items;
+    private ArrayList<Status> tweets;
+    private HashMap<Long, Drawable> usersProfileImages;
 
-    public TweetsAdapter(Activity activity, ArrayList<Status> tweets) {
+    public TweetsAdapter(Activity activity, ArrayList<Status> tweets, HashMap<Long, Drawable> usersProfileImages) {
         super(activity, R.layout.tweet, tweets);
         this.activity = activity;
-        this.items = tweets;
+        this.tweets = tweets;
+        this.usersProfileImages = usersProfileImages;
     }
 
     @Override
@@ -29,25 +31,29 @@ public class TweetsAdapter extends ArrayAdapter<Status> {
         LayoutInflater inflater = activity.getLayoutInflater();
         View tweetView = inflater.inflate(R.layout.tweet, null);
 
-        TextView message = (TextView) tweetView.findViewById(R.id.message);
-        message.setMovementMethod(LinkMovementMethod.getInstance());
+        TextView messageView = (TextView) tweetView.findViewById(R.id.message);
 
-        TextView date = (TextView) tweetView.findViewById(R.id.date);
-        TextView author = (TextView) tweetView.findViewById(R.id.author);
-        ImageView avatar = (ImageView) tweetView.findViewById(R.id.avatar);
+        TextView dateView = (TextView) tweetView.findViewById(R.id.date);
+        TextView authorView = (TextView) tweetView.findViewById(R.id.author);
+        ImageView avatarView = (ImageView) tweetView.findViewById(R.id.avatar);
 
-        if (items.get(position) != null) {
-            Status status = items.get(position);
+        if (tweets.get(position) != null) {
+            Status status = tweets.get(position);
 
-            author.setText(status.getUser().getName());
-            message.setText(Html.fromHtml(status.getText()));
-            date.setText(status.getCreatedAt().toLocaleString());
+            authorView.setText(status.getUser().getName());
+            messageView.setText(status.getText());
+            dateView.setText(status.getCreatedAt().toLocaleString());
 
-            /* TODO fix images uri encoding
-            // encode profile image url to uri...
-            String encodedProfileImageURL = Uri.encode(status.getUser().getProfileImageURL().toString());
-            avatar.setImageURI(Uri.parse(encodedProfileImageURL));
-            */
+            // Get stored user profile image or download it
+            Drawable profileImage;
+            Long userId = status.getUser().getId();
+            if(usersProfileImages.containsKey(userId)) {
+                profileImage = usersProfileImages.get(userId);
+            } else {
+                profileImage = Tools.loadDrawableFromImageUrl(status.getUser().getProfileImageURL().toString());
+                usersProfileImages.put(userId, profileImage);
+            }
+            avatarView.setImageDrawable(profileImage);
         }
 
         return tweetView;
