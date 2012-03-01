@@ -15,21 +15,25 @@ public final class R {
         public static final int icon=0x7f020001;
     }
     public static final class id {
-        public static final int another_pin=0x7f050004;
-        public static final int author=0x7f050006;
-        public static final int avatar=0x7f050005;
-        public static final int date=0x7f050008;
-        public static final int launch_browser=0x7f050001;
-        public static final int message=0x7f050007;
-        public static final int receive_token=0x7f050003;
-        public static final int receive_token_field=0x7f050002;
-        public static final int tweets=0x7f050000;
+        public static final int another_pin=0x7f060004;
+        public static final int author=0x7f060006;
+        public static final int avatar=0x7f060005;
+        public static final int date=0x7f060008;
+        public static final int launch_browser=0x7f060001;
+        public static final int message=0x7f060007;
+        public static final int receive_token=0x7f060003;
+        public static final int receive_token_field=0x7f060002;
+        public static final int refresh=0x7f060009;
+        public static final int tweets=0x7f060000;
     }
     public static final class layout {
         public static final int main=0x7f030000;
         public static final int request_token_launch=0x7f030001;
         public static final int request_token_receive=0x7f030002;
         public static final int tweet=0x7f030003;
+    }
+    public static final class menu {
+        public static final int menu=0x7f050000;
     }
     public static final class string {
         public static final int app_name=0x7f040000;

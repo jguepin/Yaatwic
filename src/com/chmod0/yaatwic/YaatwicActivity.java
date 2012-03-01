@@ -4,9 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import twitter4j.Status;
@@ -20,8 +21,7 @@ import java.util.HashMap;
 
 public class YaatwicActivity extends Activity {
     private ArrayList<Status> tweets;
-    private HashMap<Long, Drawable> usersProfileImages;
-    private ArrayAdapter<Status> tweetsAdapter;
+    private HashMap<Long, String> usersAvatars;
     private Twitter twitter;
     private YaatwiConf yaatwiConf;
 
@@ -37,9 +37,9 @@ public class YaatwicActivity extends Activity {
 
         // Create the list of tweets
         tweets = new ArrayList<Status>();
-        usersProfileImages = new HashMap<Long, Drawable>();
+        usersAvatars = new HashMap<Long, String>();
 
-        tweetsAdapter = new TweetsAdapter(this, tweets, usersProfileImages);
+        ArrayAdapter<Status> tweetsAdapter = new TweetsAdapter(this, tweets, usersAvatars);
 
         // Get the tweets list view
         ListView tweetsView = (ListView) findViewById(R.id.tweets);
@@ -51,7 +51,7 @@ public class YaatwicActivity extends Activity {
         //AccessToken accessToken = loadAccessToken(); TODO uncomment for production
         AccessToken accessToken = new AccessToken("164509432-sZzSYgwbjBcmvhx1ihuhgAtdVjjqNIrLOPQX1QPw",
                 "hiWd3Sdri3pwFWCJR4XQAAtvb2VPNoaxNl9HyClpVJE");
-        if(accessToken != null)
+        if (accessToken != null)
             yaatwiConf = YaatwiConf.getInstance(accessToken);
         else
             yaatwiConf = YaatwiConf.getInstance();
@@ -63,9 +63,9 @@ public class YaatwicActivity extends Activity {
         if (yaatwiConf.getAccessToken() == null) {
             requestAccessToken();
         } else {
+            loadSavedTweets();
             loadOnlineData();
         }
-
     }
 
     public void requestAccessToken() {
@@ -95,8 +95,7 @@ public class YaatwicActivity extends Activity {
         if (yaatwiConf.isReady()) {
             try {
                 // Load tweets from twitter
-                Log.d("Yaa", "Loading tweets from twitter");
-                tweets.addAll(twitter.getHomeTimeline());
+                Tools.addTweets(tweets, new ArrayList<Status>(twitter.getHomeTimeline()));
 
             } catch (TwitterException e) {
                 e.printStackTrace();
@@ -108,6 +107,10 @@ public class YaatwicActivity extends Activity {
         try {
             ObjectOutputStream oos = new ObjectOutputStream(openFileOutput(YaatwiConf.tweetsFileName, Context.MODE_PRIVATE));
             oos.writeObject(tweets);
+
+            oos = new ObjectOutputStream(openFileOutput(YaatwiConf.avatarsFileName, Context.MODE_PRIVATE));
+            oos.writeObject(usersAvatars);
+
             oos.close();
 
         } catch (FileNotFoundException e) {
@@ -117,10 +120,17 @@ public class YaatwicActivity extends Activity {
         }
     }
 
+    /**
+     * Load the serialized list of tweets from internal memory
+     */
     public void loadSavedTweets() {
         try {
             ObjectInputStream ois = new ObjectInputStream(openFileInput(YaatwiConf.tweetsFileName));
-            tweets = (ArrayList<Status>) ois.readObject();
+            Tools.addTweets(tweets, (ArrayList<Status>) ois.readObject());
+
+            ois = new ObjectInputStream(openFileInput(YaatwiConf.avatarsFileName));
+            usersAvatars = (HashMap<Long, String>) ois.readObject();
+
             ois.close();
 
         } catch (FileNotFoundException e) {
@@ -156,8 +166,33 @@ public class YaatwicActivity extends Activity {
                 saveAccessToken(accessTokenStr, accessTokenSecretStr);
                 yaatwiConf.setAccessToken(new AccessToken(accessTokenStr, accessTokenSecretStr));
 
-                loadOnlineData();
+                loadSavedTweets();
             }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.refresh:
+                loadOnlineData();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        saveTweets();
     }
 }

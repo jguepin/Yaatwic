@@ -15,6 +15,7 @@ public class YaatwiConf {
     private Twitter twitter;
     public final static String preferencesFileName = "yaatwic.properties";
     public final static String tweetsFileName = "tweets";
+    public final static String avatarsFileName = "avatars";
 
     private YaatwiConf() {
 
